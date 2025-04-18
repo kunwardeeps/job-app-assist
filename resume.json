@@ -1,0 +1,22 @@
+{
+  "name": "John Doe",
+  "email": "john.doe@email.com",
+  "phone": "123-456-7890",
+  "summary": "Experienced software engineer with expertise in web development and AI.",
+  "skills": ["JavaScript", "Python", "AI", "React", "Node.js"],
+  "experience": [
+    {
+      "company": "Tech Solutions",
+      "role": "Senior Developer",
+      "years": "2020-2024",
+      "details": "Led a team building AI-powered web apps."
+    }
+  ],
+  "education": [
+    {
+      "school": "State University",
+      "degree": "BSc Computer Science",
+      "years": "2016-2020"
+    }
+  ]
+}

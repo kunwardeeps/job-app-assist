@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Job App Assist Options</title>
+  <script src="options.js"></script>
+</head>
+<body>
+  <h2>Job App Assist Configuration</h2>
+  <label>Resume File Path: <input type="text" id="resume-path"><button id="browse-btn" type="button">Browse</button></label><br>
+  <input type="file" id="resume-file" style="display:none" accept=".json,.txt">
+  <label>LLM API Endpoint: <input type="text" id="llm-endpoint"></label><br>
+  <label>LLM API Key: <input type="password" id="llm-key"></label><br>
+  <label>Model:
+    <select id="llm-model">
+      <option value="gemini">Google Gemini</option>
+      <option value="gpt-4">OpenAI GPT-4</option>
+    </select>
+  </label><br>
+  <button id="save-btn">Save</button>
+</body>
+</html>

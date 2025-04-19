@@ -1,35 +1,27 @@
 // Background logic for reading resume and calling LLM
-
-// Import llm.js for LLM API calls
 importScripts('llm.js');
 
 console.log('[background.js] Background script loaded');
 
-// Helper: Read resume file from user path (using fetch for file:// URLs)
-async function readResumeFile(path) {
-  try {
-    if (path.startsWith('file://')) {
-      const response = await fetch(path);
-      return await response.json();
-    } else {
-      // Try as relative path in extension directory
-      const response = await fetch(chrome.runtime.getURL(path));
-      return await response.json();
-    }
-  } catch (e) {
-    return null;
-  }
-}
-
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   console.log('[background.js] Received message:', request);
+  
   if (request.action === 'readResume') {
-    readResumeFile(request.path).then(resume => {
-      console.log('[background.js] Read resume result:', resume);
-      sendResponse({ resume });
+    // Try local storage first (for PDFs), then sync storage
+    chrome.storage.local.get(['resumeContent'], function(localItems) {
+      if (localItems.resumeContent) {
+        console.log('[background.js] Found resume in local storage');
+        sendResponse({ resume: localItems.resumeContent });
+      } else {
+        chrome.storage.sync.get(['resumeContent'], function(syncItems) {
+          console.log('[background.js] Found resume in sync storage');
+          sendResponse({ resume: syncItems.resumeContent });
+        });
+      }
     });
     return true; // async
   }
+  
   if (request.action === 'callLLM') {
     callLLM(request.model, request.endpoint, request.apiKey, request.prompt).then(answerText => {
       console.log('[background.js] LLM raw answerText:', answerText);

@@ -14,6 +14,10 @@
   "background": {
     "service_worker": "background.js"
   },
+  "web_accessible_resources": [{
+    "resources": ["pdf.min.js", "pdf.worker.min.js"],
+    "matches": ["<all_urls>"]
+  }],
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
@@ -26,7 +30,7 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["content.js"]
+      "js": ["pdf.min.js", "pdf.worker.min.js", "content.js"]
     }
   ]
 }

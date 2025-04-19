@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('llm-key').value = items.llmKey || '';
     document.getElementById('llm-model').value = items.llmModel || 'gemini';
   });
+
   document.getElementById('save-btn').addEventListener('click', function() {
     chrome.storage.sync.set({
       resumePath: document.getElementById('resume-path').value,
@@ -16,24 +17,56 @@ document.addEventListener('DOMContentLoaded', function() {
       alert('Configuration saved!');
     });
   });
+
   document.getElementById('browse-btn').addEventListener('click', function() {
     document.getElementById('resume-file').click();
   });
-  document.getElementById('resume-file').addEventListener('change', function(event) {
+
+  document.getElementById('resume-file').addEventListener('change', async function(event) {
     const file = event.target.files[0];
     if (file) {
       document.getElementById('resume-path').value = file.name;
-      // Optionally, read and store file content in storage
+      
+      // Read file based on type
       const reader = new FileReader();
-      reader.onload = function(e) {
-        try {
-          const resumeContent = JSON.parse(e.target.result);
-          chrome.storage.sync.set({ resumeContent });
-        } catch {
-          chrome.storage.sync.set({ resumeContent: e.target.result });
+      reader.onload = async function(e) {
+        let resumeContent;
+        
+        if (file.name.toLowerCase().endsWith('.pdf')) {
+          console.log('[options.js] Reading PDF file, size:', e.target.result.byteLength);
+          // For PDFs, store as ArrayBuffer
+          resumeContent = {
+            type: 'pdf',
+            data: Array.from(new Uint8Array(e.target.result)),
+            size: e.target.result.byteLength
+          };
+          // Use chrome.storage.local for PDFs since they can be large
+          chrome.storage.local.set({ resumeContent }, function() {
+            console.log('[options.js] PDF content saved to local storage');
+          });
+        } else {
+          // For JSON/text files use sync storage
+          const text = e.target.result;
+          try {
+            resumeContent = JSON.parse(text);
+          } catch {
+            resumeContent = {
+              type: 'text',
+              data: text
+            };
+          }
+          chrome.storage.sync.set({ resumeContent }, function() {
+            console.log('[options.js] Text/JSON content saved to sync storage');
+          });
         }
       };
-      reader.readAsText(file);
+
+      // Read as appropriate format
+      if (file.name.toLowerCase().endsWith('.pdf')) {
+        reader.readAsArrayBuffer(file);
+      } else {
+        reader.readAsText(file);
+      }
     }
   });
 });

@@ -105,11 +105,17 @@ async function processResumeContent(content) {
 // Helper: extract visible form fields/questions
 function extractQuestions() {
   const questions = [];
-  const formElements = document.querySelectorAll('form input, form textarea, form select');
+  const formElements = document.querySelectorAll('form input[type="text"], form textarea');
   formElements.forEach(el => {
-    // Only visible and enabled fields
-    if (!el.disabled && el.offsetParent !== null) {
-      const label = el.labels && el.labels.length > 0 ? el.labels[0].innerText : el.placeholder || el.name || '';
+    // Only visible, enabled, and empty fields
+    if (
+      !el.disabled &&
+      el.offsetParent !== null &&
+      !el.value // Only unfilled
+    ) {
+      const label = el.labels && el.labels.length > 0
+        ? el.labels[0].innerText
+        : el.placeholder || el.name || '';
       if (label) {
         questions.push({
           name: el.name || el.id || label,

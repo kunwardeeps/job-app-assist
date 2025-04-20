@@ -11,11 +11,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     chrome.storage.local.get(['resumeContent'], function(localItems) {
       if (localItems.resumeContent) {
         console.log('[background.js] Found resume in local storage');
-        sendResponse({ resume: localItems.resumeContent });
+        sendResponse({ 'resume-data': localItems.resumeContent });
       } else {
         chrome.storage.sync.get(['resumeContent'], function(syncItems) {
           console.log('[background.js] Found resume in sync storage');
-          sendResponse({ resume: syncItems.resumeContent });
+          sendResponse({ 'resume-data': syncItems.resumeContent });
         });
       }
     });
@@ -34,6 +34,30 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       }
       console.log('[background.js] Parsed answers:', answers);
       sendResponse({ answers });
+    });
+    return true; // async
+  }
+
+  if (request.action === 'generateResume') {
+    // request.jobDescription: string, request.resumeContent: string, request.model, request.endpoint, request.apiKey
+    const prompt = `
+You are an expert resume writer. Given the following job description and the current resume, customize the resume to best fit the job description. 
+- Only include relevant experiences, skills, and keywords that match the job description.
+- Rewrite sections as needed to highlight fit.
+- Output the full customized resume in professional format.
+
+Job Description:
+${request.jobDescription}
+
+Current Resume:
+${request.resumeContent}
+`;
+
+    callLLM(request.model, request.endpoint, request.apiKey, prompt).then(customizedResume => {
+      // Save customized resume to local storage
+      chrome.storage.local.set({ customizedResume }, function() {
+        sendResponse({ success: true });
+      });
     });
     return true; // async
   }

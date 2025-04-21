@@ -39,24 +39,31 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 
   if (request.action === 'generateResume') {
-    // request.jobDescription: string, request.resumeContent: string, request.model, request.endpoint, request.apiKey
     const prompt = `
-You are an expert resume writer. Given the following job description and the current resume, customize the resume to best fit the job description. 
-- Only include relevant experiences, skills, and keywords that match the job description.
-- Rewrite sections as needed to highlight fit.
-- Output the full customized resume in professional format.
+You are an expert resume writer. Given the following job description, current resume, and resume template in markdown format, create a customized resume.
+- Follow the exact structure and formatting of the template
+- Only include relevant experiences, skills, and keywords that match the job description
+- Rewrite sections as needed to highlight fit
 
 Job Description:
 ${request.jobDescription}
 
-Current Resume:
+Current Resume Content:
 ${request.resumeContent}
-`;
 
+Resume Template Format:
+${request.template || '(Using default markdown format)'}
+
+Instructions:
+1. Fill in the template with relevant content from the current resume
+2. Customize content to match job requirements
+3. Keep markdown formatting intact
+4. Output the complete formatted resume
+`;
+    
     callLLM(request.model, request.endpoint, request.apiKey, prompt).then(customizedResume => {
-      // Save customized resume to local storage
       chrome.storage.local.set({ customizedResume }, function() {
-        sendResponse({ success: true });
+        sendResponse({ success: true, customizedResume });
       });
     });
     return true; // async

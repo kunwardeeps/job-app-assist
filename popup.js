@@ -46,21 +46,55 @@ document.addEventListener('DOMContentLoaded', function() {
             resumeContent = JSON.stringify(resumeResp['resume-data'].data || resumeResp['resume-data']);
           }
         }
-        chrome.runtime.sendMessage({
-          action: 'generateResume',
-          jobDescription: jobDesc,
-          resumeContent: resumeContent,
-          model: config.llmModel,
-          endpoint: config.llmEndpoint,
-          apiKey: config.llmKey
-        }, function(resp) {
-          if (resp && resp.success) {
-            alert('Customized resume generated and saved to extension storage.');
-          } else {
-            alert('Failed to generate customized resume.');
-          }
+        chrome.storage.local.get(['resumeTemplate'], function(templateData) {
+          chrome.runtime.sendMessage({
+            action: 'generateResume',
+            jobDescription: jobDesc,
+            resumeContent: resumeContent,
+            template: templateData.resumeTemplate?.data || '',
+            model: config.llmModel,
+            endpoint: config.llmEndpoint,
+            apiKey: config.llmKey
+          }, function(resp) {
+            if (resp && resp.success) {
+              const blob = new Blob([resp.customizedResume], { type: 'text/markdown' });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = 'customized-resume.md';
+              document.body.appendChild(a);
+              a.click();
+              setTimeout(() => {
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+              }, 100);
+            } else {
+              alert('Failed to generate customized resume.');
+            }
+          });
         });
       });
+    });
+  });
+
+  // Add download saved resume handler
+  document.getElementById('download-saved-resume-btn').addEventListener('click', function() {
+    chrome.storage.local.get(['customizedResume'], function(data) {
+      if (data.customizedResume) {
+        const blob = new Blob([data.customizedResume], { type: 'text/markdown' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'saved-resume.md';
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        }, 100);
+      } else {
+        alert('No saved resume found in storage.');
+      }
     });
   });
 });

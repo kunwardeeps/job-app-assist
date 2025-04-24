@@ -39,7 +39,31 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 
   if (request.action === 'generateResume') {
-    const prompt = `
+    let prompt;
+    if (request.templateExt === 'tex') {
+      prompt = `
+You are an expert resume writer. Given the following job description, current resume, and resume template in LaTeX format, create a customized resume.
+- Follow the exact structure and formatting of the LaTeX template
+- Only include relevant experiences, skills, and keywords that match the job description
+- Rewrite sections as needed to highlight fit
+
+Job Description:
+${request.jobDescription}
+
+Current Resume Content:
+${request.resumeContent}
+
+Resume Template Format (LaTeX):
+${request.template || '(Using default LaTeX format)'}
+
+Instructions:
+1. Fill in the template with relevant content from the current resume
+2. Customize content to match job requirements
+3. Keep LaTeX formatting intact
+4. Output the complete formatted LaTeX resume
+`;
+    } else {
+      prompt = `
 You are an expert resume writer. Given the following job description, current resume, and resume template in markdown format, create a customized resume.
 - Follow the exact structure and formatting of the template
 - Only include relevant experiences, skills, and keywords that match the job description
@@ -60,7 +84,7 @@ Instructions:
 3. Keep markdown formatting intact
 4. Output the complete formatted resume
 `;
-    
+    }
     callLLM(request.model, request.endpoint, request.apiKey, prompt).then(customizedResume => {
       chrome.storage.local.set({ customizedResume }, function() {
         sendResponse({ success: true, customizedResume });

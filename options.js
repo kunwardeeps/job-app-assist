@@ -70,16 +70,17 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 
-  // Handle resume template (LaTeX .tex) import
+  // Handle resume template (.md or .tex) import
   document.getElementById('resume-template-file').addEventListener('change', function(event) {
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = function(e) {
-        // Store as text in local storage for .tex files
+        // Store as text in local storage for .md or .tex files
         const templateContent = {
           name: file.name,
           type: file.type,
+          ext: file.name.split('.').pop().toLowerCase(),
           data: e.target.result
         };
         chrome.storage.local.set({ resumeTemplate: templateContent }, function() {

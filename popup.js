@@ -52,6 +52,7 @@ document.addEventListener('DOMContentLoaded', function() {
             jobDescription: jobDesc,
             resumeContent: resumeContent,
             template: templateData.resumeTemplate?.data || '',
+            templateExt: templateData.resumeTemplate?.ext || '',
             model: config.llmModel,
             endpoint: config.llmEndpoint,
             apiKey: config.llmKey

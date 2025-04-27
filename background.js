@@ -57,10 +57,11 @@ Resume Template Format (LaTeX):
 ${request.template || '(Using default LaTeX format)'}
 
 Instructions:
-1. Fill in the template with relevant content from the current resume
-2. Customize content to match job requirements
-3. Keep LaTeX formatting intact
-4. Output the complete formatted LaTeX resume
+1. Keep the personal information like name, email, phone number, linkedin and github intact in the LaTex template
+2. Fill in the template with relevant content from the current resume
+3. Customize content to match job requirements
+4. Keep LaTeX formatting intact
+5. Output the complete formatted LaTeX resume
 `;
     } else {
       prompt = `
@@ -79,10 +80,11 @@ Resume Template Format:
 ${request.template || '(Using default markdown format)'}
 
 Instructions:
-1. Fill in the template with relevant content from the current resume
-2. Customize content to match job requirements
-3. Keep markdown formatting intact
-4. Output the complete formatted resume
+1. Keep the personal information like name, email, phone number, linkedin and github intact in the Markdown template
+2. Fill in the template with relevant content from the current resume
+3. Customize content to match job requirements
+4. Keep Markdown formatting intact
+5. Output the complete formatted Markdown resume
 `;
     }
     callLLM(request.model, request.endpoint, request.apiKey, prompt).then(customizedResume => {

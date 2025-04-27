@@ -2,3 +2,7 @@ resume.pdf
 resume-kd.txt
 ~$sume-kd.pdf
 resume-kd.pdf
+*.aux
+*.fdb_latexmk
+*.fls
+*.log

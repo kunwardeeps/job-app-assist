@@ -1,10 +1,18 @@
 document.addEventListener('DOMContentLoaded', function() {
   // Load saved config
-  chrome.storage.sync.get(['resumePath', 'llmEndpoint', 'llmKey', 'llmModel'], function(items) {
+  chrome.storage.sync.get([
+    'resumePath', 'llmEndpoint', 'llmKey', 'llmModel',
+    'personalName', 'personalEmail', 'personalPhone', 'personalLinkedin', 'personalGithub'
+  ], function(items) {
     document.getElementById('resume-path').value = items.resumePath || '';
     document.getElementById('llm-endpoint').value = items.llmEndpoint || '';
     document.getElementById('llm-key').value = items.llmKey || '';
     document.getElementById('llm-model').value = items.llmModel || 'gemini';
+    document.getElementById('personal-name').value = items.personalName || '';
+    document.getElementById('personal-email').value = items.personalEmail || '';
+    document.getElementById('personal-phone').value = items.personalPhone || '';
+    document.getElementById('personal-linkedin').value = items.personalLinkedin || '';
+    document.getElementById('personal-github').value = items.personalGithub || '';
   });
 
   document.getElementById('save-btn').addEventListener('click', function() {
@@ -12,7 +20,12 @@ document.addEventListener('DOMContentLoaded', function() {
       resumePath: document.getElementById('resume-path').value,
       llmEndpoint: document.getElementById('llm-endpoint').value,
       llmKey: document.getElementById('llm-key').value,
-      llmModel: document.getElementById('llm-model').value
+      llmModel: document.getElementById('llm-model').value,
+      personalName: document.getElementById('personal-name').value,
+      personalEmail: document.getElementById('personal-email').value,
+      personalPhone: document.getElementById('personal-phone').value,
+      personalLinkedin: document.getElementById('personal-linkedin').value,
+      personalGithub: document.getElementById('personal-github').value
     }, function() {
       alert('Configuration saved!');
     });
@@ -62,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function() {
       };
 
       // Read as appropriate format
-      if (file.name.toLowerCase().endsWith('.pdf')) {
+      if (file.name.toLowerCase().endswith('.pdf')) {
         reader.readAsArrayBuffer(file);
       } else {
         reader.readAsText(file);

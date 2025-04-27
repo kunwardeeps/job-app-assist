@@ -1,6 +1,8 @@
-**Your Name**  
+# **Deep Singh**
 
-# **Experience**
+[deep.singh@gmail.com](mailto:deep.singh@gmail.com) | 111-111-1111 | [LinkedIn](https://www.linkedin.com/in/deepsingh) | [Github](https://github.com/deepsingh)
+
+## **Experience**
 
 ### **Title 1**	 *Date From \- Date To*
 
@@ -8,13 +10,13 @@ Company Name, Location
 
 * Relevant bullet points
 
-# **Projects**
+## **Projects**
 
 ### [**Project 1**](link url)	 *Month Year*
 
 * Project bullet points
 
-# **Skills**
+## **Skills**
 
 * **Programming Languages**: 
 
@@ -22,7 +24,7 @@ Company Name, Location
 
 * **Databases**: 
 
-# **Education**
+## **Education**
 
 ### **University, Location**	*Date from \- Date to*
 

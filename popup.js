@@ -58,17 +58,34 @@ document.addEventListener('DOMContentLoaded', function() {
             apiKey: config.llmKey
           }, function(resp) {
             if (resp && resp.success) {
-              const blob = new Blob([resp.customizedResume], { type: 'text/markdown' });
-              const url = URL.createObjectURL(blob);
-              const a = document.createElement('a');
-              a.href = url;
-              a.download = 'customized-resume.md';
-              document.body.appendChild(a);
-              a.click();
-              setTimeout(() => {
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-              }, 100);
+              // Get personal info from config and replace placeholders
+              chrome.storage.sync.get([
+                'personalName', 'personalEmail', 'personalPhone', 'personalLinkedin', 'personalGithub'
+              ], function(personal) {
+                // Remove the first and last lines from the customized resume
+                const lines = resp.customizedResume.split('\n');
+                if (lines.length > 2) {
+                  resp.customizedResume = lines.slice(1, -1).join('\n');
+                }
+                let customized = resp.customizedResume;
+                customized = customized
+                  .replace(/Deep Singh/g, personal.personalName || '')
+                  .replace(/deep\.singh@gmail\.com/g, personal.personalEmail || '')
+                  .replace(/111-111-1111/g, personal.personalPhone || '')
+                  .replace(/linkedin\.com\/in\/deepsingh/g, personal.personalLinkedin || '')
+                  .replace(/github\.com\/deepsingh/g, personal.personalGithub || '');
+                const blob = new Blob([customized], { type: 'text/markdown' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'customized-resume.md';
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(() => {
+                  document.body.removeChild(a);
+                  URL.revokeObjectURL(url);
+                }, 100);
+              });
             } else {
               alert('Failed to generate customized resume.');
             }

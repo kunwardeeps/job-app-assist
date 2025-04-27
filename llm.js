@@ -15,6 +15,10 @@ async function callLLM(model, endpoint, apiKey, prompt) {
     console.log('[llm.js] Gemini API response status:', response.status);
     const data = await response.json();
     console.log('[llm.js] Gemini API response data:', data);
+    // Log token usage if available
+    if (data.usageMetadata) {
+      console.log('[llm.js] Gemini token usage:', data.usageMetadata);
+    }
     return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
   } else if (model === 'gpt-4') {
     // OpenAI GPT-4 API call
@@ -30,6 +34,10 @@ async function callLLM(model, endpoint, apiKey, prompt) {
     console.log('[llm.js] GPT-4 API response status:', response.status);
     const data = await response.json();
     console.log('[llm.js] GPT-4 API response data:', data);
+    // Log token usage if available
+    if (data.usage) {
+      console.log('[llm.js] GPT-4 token usage:', data.usage);
+    }
     return data.choices?.[0]?.message?.content || '';
   }
   console.warn('[llm.js] Unknown model:', model);

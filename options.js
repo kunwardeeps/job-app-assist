@@ -174,4 +174,31 @@ document.addEventListener('DOMContentLoaded', function() {
       reader.readAsText(file);
     }
   });
+
+  // Load dark mode preference
+  chrome.storage.sync.get(['darkMode'], function(items) {
+    const darkMode = !!items.darkMode;
+    applyDarkMode(darkMode);
+    const toggle = document.getElementById('dark-mode-toggle');
+    if (toggle) toggle.checked = darkMode;
+  });
+
+  // Dark mode toggle event
+  const darkToggle = document.getElementById('dark-mode-toggle');
+  if (darkToggle) {
+    darkToggle.addEventListener('change', function() {
+      const enabled = darkToggle.checked;
+      applyDarkMode(enabled);
+      chrome.storage.sync.set({ darkMode: enabled });
+    });
+  }
 });
+
+// Dark mode logic
+function applyDarkMode(enabled) {
+  if (enabled) {
+    document.body.classList.add('dark-mode');
+  } else {
+    document.body.classList.remove('dark-mode');
+  }
+}

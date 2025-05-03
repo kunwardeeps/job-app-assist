@@ -72,3 +72,46 @@ button:hover {
   color: #2563eb;
   font-weight: 600;
 }
+
+/* Dark mode styles */
+body.dark-mode {
+  background: #181a20;
+  color: #e3e6ed;
+}
+body.dark-mode .container {
+  background: #232634;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
+body.dark-mode input[type="text"],
+body.dark-mode textarea,
+body.dark-mode select {
+  background: #232634;
+  color: #e3e6ed;
+  border: 1px solid #44495a;
+}
+body.dark-mode input[type="text"]:focus,
+body.dark-mode textarea:focus,
+body.dark-mode select:focus {
+  border-color: #7aa2f7;
+}
+body.dark-mode button {
+  background: #3b82f6;
+  color: #fff;
+}
+body.dark-mode button:hover {
+  background: #2563eb;
+}
+body.dark-mode .current-template {
+  background: #232634;
+  border: 1px solid #334155;
+  color: #b6c2e2;
+}
+body.dark-mode .section-title {
+  color: #7aa2f7;
+}
+body.dark-mode label {
+  color: #e3e6ed !important;
+}
+body.dark-mode h1 {
+  color: #e3e6ed !important;
+}

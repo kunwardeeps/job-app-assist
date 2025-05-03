@@ -1,29 +1,31 @@
 body {
   font-family: 'Segoe UI', Arial, sans-serif;
   margin: 16px 12px 12px 12px;
-  background: #f8f9fa;
+  background: #181a20 !important;
   min-width: 320px;
-  color: #222;
+  color: #e3e6ed !important;
 }
 label {
   font-weight: 500;
   margin-bottom: 4px;
   display: block;
+  color: #b6c2e2 !important;
 }
 textarea {
   width: 100%;
   box-sizing: border-box;
   border-radius: 4px;
-  border: 1px solid #ccc;
+  border: 1px solid #44495a !important;
   padding: 8px;
   font-size: 14px;
   margin-bottom: 12px;
-  background: #fff;
+  background: #232634 !important;
   resize: vertical;
+  color: #e3e6ed !important;
 }
 button {
-  background: #2563eb;
-  color: #fff;
+  background: #3b82f6 !important;
+  color: #fff !important;
   border: none;
   border-radius: 4px;
   padding: 8px 14px;
@@ -34,10 +36,10 @@ button {
   transition: background 0.15s;
 }
 button:hover {
-  background: #1741a6;
+  background: #2563eb !important;
 }
 hr {
   border: none;
-  border-top: 1px solid #e0e0e0;
+  border-top: 1px solid #334155 !important;
   margin: 14px 0;
 }

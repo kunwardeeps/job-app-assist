@@ -2,38 +2,109 @@ document.addEventListener('DOMContentLoaded', function() {
   // Load saved config
   chrome.storage.sync.get([
     'resumePath', 'llmEndpoint', 'llmKey', 'llmModel',
-    'personalName', 'personalEmail', 'personalPhone', 'personalLinkedin', 'personalGithub'
+    'personalName', 'personalEmail', 'personalPhone', 'personalLinkedin', 'personalGithub', 'template'
   ], function(items) {
-    document.getElementById('resume-path').value = items.resumePath || '';
-    document.getElementById('llm-endpoint').value = items.llmEndpoint || '';
-    document.getElementById('llm-key').value = items.llmKey || '';
-    document.getElementById('llm-model').value = items.llmModel || 'gemini';
-    document.getElementById('personal-name').value = items.personalName || '';
-    document.getElementById('personal-email').value = items.personalEmail || '';
-    document.getElementById('personal-phone').value = items.personalPhone || '';
-    document.getElementById('personal-linkedin').value = items.personalLinkedin || '';
-    document.getElementById('personal-github').value = items.personalGithub || '';
+    const resumePathInput = document.getElementById('resume-path');
+    const llmEndpointInput = document.getElementById('llm-endpoint');
+    const llmKeyInput = document.getElementById('llm-key');
+    const llmModelSelect = document.getElementById('llm-model');
+    const nameInput = document.getElementById('personal-name');
+    const emailInput = document.getElementById('personal-email');
+    const phoneInput = document.getElementById('personal-phone');
+    const linkedinInput = document.getElementById('personal-linkedin');
+    const githubInput = document.getElementById('personal-github');
+    const templateInput = document.getElementById('template');
+
+    if (resumePathInput) resumePathInput.value = items.resumePath || '';
+    if (llmEndpointInput) llmEndpointInput.value = items.llmEndpoint || '';
+    if (llmKeyInput) llmKeyInput.value = items.llmKey || '';
+    if (llmModelSelect) llmModelSelect.value = items.llmModel || 'gemini';
+    if (nameInput) nameInput.value = items.personalName || '';
+    if (emailInput) emailInput.value = items.personalEmail || '';
+    if (phoneInput) phoneInput.value = items.personalPhone || '';
+    if (linkedinInput) linkedinInput.value = items.personalLinkedin || '';
+    if (githubInput) githubInput.value = items.personalGithub || '';
+    if (templateInput) templateInput.value = items.template || '';
   });
 
-  document.getElementById('save-btn').addEventListener('click', function() {
-    chrome.storage.sync.set({
-      resumePath: document.getElementById('resume-path').value,
-      llmEndpoint: document.getElementById('llm-endpoint').value,
-      llmKey: document.getElementById('llm-key').value,
-      llmModel: document.getElementById('llm-model').value,
-      personalName: document.getElementById('personal-name').value,
-      personalEmail: document.getElementById('personal-email').value,
-      personalPhone: document.getElementById('personal-phone').value,
-      personalLinkedin: document.getElementById('personal-linkedin').value,
-      personalGithub: document.getElementById('personal-github').value
-    }, function() {
-      alert('Configuration saved!');
+  // Use form submit event instead of button click
+  const optionsForm = document.getElementById('options-form');
+  if (optionsForm) {
+    optionsForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const resumePathInput = document.getElementById('resume-path');
+      const llmEndpointInput = document.getElementById('llm-endpoint');
+      const llmKeyInput = document.getElementById('llm-key');
+      const llmModelSelect = document.getElementById('llm-model');
+      const nameInput = document.getElementById('personal-name');
+      const emailInput = document.getElementById('personal-email');
+      const phoneInput = document.getElementById('personal-phone');
+      const linkedinInput = document.getElementById('personal-linkedin');
+      const githubInput = document.getElementById('personal-github');
+      const templateInput = document.getElementById('template');
+
+      chrome.storage.sync.set({
+        resumePath: resumePathInput ? resumePathInput.value : '',
+        llmEndpoint: llmEndpointInput ? llmEndpointInput.value : '',
+        llmKey: llmKeyInput ? llmKeyInput.value : '',
+        llmModel: llmModelSelect ? llmModelSelect.value : 'gemini',
+        personalName: nameInput ? nameInput.value : '',
+        personalEmail: emailInput ? emailInput.value : '',
+        personalPhone: phoneInput ? phoneInput.value : '',
+        personalLinkedin: linkedinInput ? linkedinInput.value : '',
+        personalGithub: githubInput ? githubInput.value : '',
+        template: templateInput ? templateInput.value : ''
+      }, function() {
+        alert('Configuration saved!');
+      });
     });
-  });
+  }
 
-  document.getElementById('browse-btn').addEventListener('click', function() {
-    document.getElementById('resume-file').click();
-  });
+  // Safely get elements
+  const browseBtn = document.getElementById('browse-btn');
+  const resumeFileInput = document.getElementById('resume-file');
+  const resumePathInput = document.getElementById('resume-path');
+  const resumeTemplatePathInput = document.getElementById('resume-template-path');
+  const resumeTemplateBrowseBtn = document.getElementById('resume-template-browse-btn');
+  const resumeTemplateFileInput = document.getElementById('resume-template-file');
+  const resumeTemplateStatus = document.getElementById('resume-template-status');
+
+  // Load saved resume template (if any) and update input/status
+  if (resumeTemplatePathInput) {
+    chrome.storage.local.get(['resumeTemplate'], function(items) {
+      if (items.resumeTemplate && items.resumeTemplate.name) {
+        resumeTemplatePathInput.value = items.resumeTemplate.name;
+      }
+    });
+  }
+
+  // Only add listeners if all elements exist
+  if (browseBtn && resumeFileInput && resumePathInput) {
+    browseBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      resumeFileInput.click();
+    });
+
+    resumeFileInput.addEventListener('change', function() {
+      if (resumeFileInput.files && resumeFileInput.files.length > 0) {
+        resumePathInput.value = resumeFileInput.files[0].name;
+      }
+    });
+  }
+
+  if (resumeTemplateBrowseBtn && resumeTemplateFileInput && resumeTemplatePathInput) {
+    resumeTemplateBrowseBtn.addEventListener('click', function() {
+      resumeTemplateFileInput.click();
+    });
+    resumeTemplateFileInput.addEventListener('change', function(e) {
+      if (resumeTemplateFileInput.files.length > 0) {
+        resumeTemplatePathInput.value = resumeTemplateFileInput.files[0].name;
+        if (resumeTemplateStatus) {
+          resumeTemplateStatus.textContent = "Template selected.";
+        }
+      }
+    });
+  }
 
   document.getElementById('resume-file').addEventListener('change', async function(event) {
     const file = event.target.files[0];
@@ -75,7 +146,7 @@ document.addEventListener('DOMContentLoaded', function() {
       };
 
       // Read as appropriate format
-      if (file.name.toLowerCase().endswith('.pdf')) {
+      if (file.name.toLowerCase().endsWith('.pdf')) {
         reader.readAsArrayBuffer(file);
       } else {
         reader.readAsText(file);
@@ -97,7 +168,6 @@ document.addEventListener('DOMContentLoaded', function() {
           data: e.target.result
         };
         chrome.storage.local.set({ resumeTemplate: templateContent }, function() {
-          document.getElementById('resume-template-status').textContent = 'Template uploaded: ' + file.name;
           console.log('[options.js] Resume template saved to local storage');
         });
       };

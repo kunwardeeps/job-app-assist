@@ -3,27 +3,41 @@
 <head>
   <title>Job App Assist Options</title>
   <script src="options.js"></script>
+  <link rel="stylesheet" href="options.css">
 </head>
 <body>
-  <h2>Job App Assist Configuration</h2>
-  <label>Name: <input type="text" id="personal-name"></label><br>
-  <label>Email: <input type="text" id="personal-email"></label><br>
-  <label>Phone: <input type="text" id="personal-phone"></label><br>
-  <label>LinkedIn: <input type="text" id="personal-linkedin"></label><br>
-  <label>GitHub: <input type="text" id="personal-github"></label><br>
-  <label>Resume Data Path: <input type="text" id="resume-path"><button id="browse-btn" type="button">Browse</button></label><br>
-  <input type="file" id="resume-file" style="display:none" accept=".json,.txt,.pdf">
-  <br>
-  <label>Resume Template (.md or .tex): <input type="file" id="resume-template-file" accept=".md,.tex"></label><br>
-  <span id="resume-template-status"></span>
-  <label>LLM API Endpoint: <input type="text" id="llm-endpoint"></label><br>
-  <label>LLM API Key: <input type="password" id="llm-key"></label><br>
-  <label>Model:
-    <select id="llm-model">
-      <option value="gemini">Google Gemini</option>
-      <option value="gpt-4">OpenAI GPT-4</option>
-    </select>
-  </label><br>
-  <button id="save-btn">Save</button>
+  <div class="container">
+    <h1>Job App Assist - Configuration</h1>
+    <form id="options-form">
+      <fieldset>
+        <legend>Personal Info</legend>
+        <label>Name: <input type="text" id="personal-name"></label>
+        <label>Email: <input type="text" id="personal-email"></label>
+        <label>Phone: <input type="text" id="personal-phone"></label>
+        <label>LinkedIn: <input type="text" id="personal-linkedin"></label>
+        <label>GitHub: <input type="text" id="personal-github"></label>
+      </fieldset>
+      <fieldset>
+        <legend>Resume</legend>
+        <label>Resume Data Path: <input type="text" id="resume-path"><button id="browse-btn" type="button">Browse</button></label>
+        <input type="file" id="resume-file" style="display:none" accept=".json,.txt,.pdf">
+        <label>Resume Template (.md or .tex): <input type="text" id="resume-template-path"><button id="resume-template-browse-btn" type="button">Browse</button></label>
+        <input type="file" id="resume-template-file" style="display:none" accept=".md,.tex">
+        <span id="resume-template-status"></span>
+      </fieldset>
+      <fieldset>
+        <legend>LLM Settings</legend>
+        <label>LLM API Endpoint: <input type="text" id="llm-endpoint"></label>
+        <label>LLM API Key: <input type="text" id="llm-key"></label>
+        <label>Model:
+          <select id="llm-model">
+            <option value="gemini">Google Gemini</option>
+            <option value="gpt-4">OpenAI GPT-4</option>
+          </select>
+        </label>
+      </fieldset>
+      <button type="submit" id="save-btn">Save</button>
+    </form>
+  </div>
 </body>
 </html>

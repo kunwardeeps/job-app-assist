@@ -1,0 +1,74 @@
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #f7f8fa;
+  margin: 0;
+  padding: 0;
+}
+.container {
+  max-width: 600px;
+  margin: 40px auto;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  padding: 32px 40px 40px 40px;
+}
+h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5em;
+  color: #2d3a4a;
+}
+label {
+  font-weight: 500;
+  margin-top: 1em;
+  display: block;
+  color: #34495e;
+}
+input[type="text"], textarea, select {
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+  margin-bottom: 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 5px;
+  font-size: 1rem;
+  background: #f9fafb;
+  box-sizing: border-box;
+  transition: border 0.2s;
+}
+input[type="text"]:focus, textarea:focus, select:focus {
+  border-color: #4f8cff;
+  outline: none;
+}
+button {
+  background: #4f8cff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 22px;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background 0.2s;
+}
+button:hover {
+  background: #2563eb;
+}
+.current-template {
+  background: #f1f5f9;
+  border: 1px solid #dbeafe;
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 18px;
+  font-family: 'Fira Mono', 'Consolas', monospace;
+  font-size: 0.97em;
+  color: #334155;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.section-title {
+  font-size: 1.1em;
+  margin-top: 2em;
+  margin-bottom: 0.5em;
+  color: #2563eb;
+  font-weight: 600;
+}

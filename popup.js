@@ -15,17 +15,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
 
-  // Grab selected text from the page and put in textarea
-  document.getElementById('grab-selection-btn').addEventListener('click', function() {
-    chrome.tabs.executeScript({
-      code: 'window.getSelection().toString();'
-    }, function(selection) {
-      if (selection && selection[0]) {
-        document.getElementById('job-desc').value = selection[0];
-      }
-    });
-  });
-
   // Generate customized resume
   document.getElementById('generate-resume-btn').addEventListener('click', function() {
     const jobDesc = document.getElementById('job-desc').value.trim();

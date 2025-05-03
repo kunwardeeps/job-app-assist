@@ -62,6 +62,8 @@ Instructions:
 3. Customize content to match job requirements
 4. Keep LaTeX formatting intact
 5. Output the complete formatted LaTeX resume
+6. Keep the dates in the mmm yyyy format (e.g., Jan 2020)
+7. Generate a 2 page resume
 `;
     } else {
       prompt = `
@@ -85,6 +87,8 @@ Instructions:
 3. Customize content to match job requirements
 4. Keep Markdown formatting intact
 5. Output the complete formatted Markdown resume
+6. Keep the dates in the mmm yyyy format (e.g., Jan 2020)
+7. Generate a 2 page resume
 `;
     }
     callLLM(request.model, request.endpoint, request.apiKey, prompt).then(customizedResume => {

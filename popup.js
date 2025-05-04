@@ -22,6 +22,8 @@ document.addEventListener('DOMContentLoaded', function() {
       alert('Please enter or select a job description.');
       return;
     }
+    const spinner = document.getElementById('spinner');
+    if (spinner) spinner.style.display = '';
     // Get resume and config
     chrome.storage.sync.get(['llmEndpoint', 'llmKey', 'llmModel'], function(config) {
       chrome.runtime.sendMessage({ action: 'readResume' }, function(resumeResp) {
@@ -46,6 +48,7 @@ document.addEventListener('DOMContentLoaded', function() {
             endpoint: config.llmEndpoint,
             apiKey: config.llmKey
           }, function(resp) {
+            if (spinner) spinner.style.display = 'none';
             if (resp && resp.success) {
               // Get personal info from config and replace placeholders
               chrome.storage.sync.get([

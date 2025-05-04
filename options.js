@@ -2,7 +2,8 @@ document.addEventListener('DOMContentLoaded', function() {
   // Load saved config
   chrome.storage.sync.get([
     'resumePath', 'llmEndpoint', 'llmKey', 'llmModel',
-    'personalName', 'personalEmail', 'personalPhone', 'personalLinkedin', 'personalGithub', 'template'
+    'personalName', 'personalEmail', 'personalPhone', 'personalLinkedin', 'personalGithub', 'templateExt',
+    'promptMd', 'promptTex', 'darkMode'
   ], function(items) {
     const resumePathInput = document.getElementById('resume-path');
     const llmEndpointInput = document.getElementById('llm-endpoint');
@@ -13,7 +14,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const phoneInput = document.getElementById('personal-phone');
     const linkedinInput = document.getElementById('personal-linkedin');
     const githubInput = document.getElementById('personal-github');
-    const templateInput = document.getElementById('template');
+    const templateExtSelect = document.getElementById('template-ext');
+    const promptMdInput = document.getElementById('prompt-md');
+    const promptTexInput = document.getElementById('prompt-tex');
+    const promptMdSection = document.getElementById('prompt-md-section');
+    const promptTexSection = document.getElementById('prompt-tex-section');
 
     if (resumePathInput) resumePathInput.value = items.resumePath || '';
     if (llmEndpointInput) llmEndpointInput.value = items.llmEndpoint || '';
@@ -24,7 +29,109 @@ document.addEventListener('DOMContentLoaded', function() {
     if (phoneInput) phoneInput.value = items.personalPhone || '';
     if (linkedinInput) linkedinInput.value = items.personalLinkedin || '';
     if (githubInput) githubInput.value = items.personalGithub || '';
-    if (templateInput) templateInput.value = items.template || '';
+    if (templateExtSelect) templateExtSelect.value = items.templateExt || 'md';
+    if (promptMdInput) {
+      promptMdInput.value = items.promptMd || `You are an expert resume writer. Given the following job description, current resume, and resume template in markdown format, create a customized resume.
+- Follow the exact structure and formatting of the template
+- Only include relevant experiences, skills, and keywords that match the job description
+- Rewrite sections as needed to highlight fit
+
+Job Description:
+{{jobDescription}}
+
+Current Resume Content:
+{{resumeContent}}
+
+Resume Template Format:
+{{template}}
+
+Instructions:
+1. Keep the personal information like name, email, phone number, linkedin and github intact in the Markdown template
+2. Fill in the template with relevant content from the current resume
+3. Customize content to match job requirements
+4. Keep Markdown formatting intact
+5. Output the complete formatted Markdown resume
+6. Keep the dates in the mmm yyyy format (e.g., Jan 2020)
+7. Generate a 2 page resume
+`;
+    }
+    if (promptTexInput) {
+      promptTexInput.value = items.promptTex || `You are an expert resume writer. Given the following job description, current resume, and resume template in LaTeX format, create a customized resume.
+- Follow the exact structure and formatting of the LaTeX template
+- Only include relevant experiences, skills, and keywords that match the job description
+- Rewrite sections as needed to highlight fit
+
+Job Description:
+{{jobDescription}}
+
+Current Resume Content:
+{{resumeContent}}
+
+Resume Template Format (LaTeX):
+{{template}}
+
+Instructions:
+1. Keep the personal information like name, email, phone number, linkedin and github intact in the LaTex template
+2. Fill in the template with relevant content from the current resume
+3. Customize content to match job requirements
+4. Keep LaTeX formatting intact
+5. Output the complete formatted LaTeX resume
+6. Keep the dates in the mmm yyyy format (e.g., Jan 2020)
+7. Generate a 2 page resume
+`;
+    }
+
+    // Detect template format and show/hide prompt fields
+    function detectTemplateFormat() {
+      const resumeTemplatePathInput = document.getElementById('resume-template-path');
+      let ext = 'md';
+      if (resumeTemplatePathInput && resumeTemplatePathInput.value.trim().toLowerCase().endsWith('.tex')) {
+        ext = 'tex';
+      } else if (resumeTemplatePathInput && resumeTemplatePathInput.value.trim().toLowerCase().endsWith('.md')) {
+        ext = 'md';
+      } else if (window.lastTemplateExt) {
+        ext = window.lastTemplateExt;
+      }
+      if (ext === 'tex') {
+        if (promptMdSection) promptMdSection.style.display = 'none';
+        if (promptTexSection) promptTexSection.style.display = '';
+        window.lastTemplateExt = 'tex';
+        return 'tex';
+      }
+      if (promptMdSection) promptMdSection.style.display = '';
+      if (promptTexSection) promptTexSection.style.display = 'none';
+      window.lastTemplateExt = 'md';
+      return 'md';
+    }
+    const resumeTemplatePathInput = document.getElementById('resume-template-path');
+    if (resumeTemplatePathInput) {
+      resumeTemplatePathInput.addEventListener('input', detectTemplateFormat);
+      resumeTemplatePathInput.addEventListener('change', detectTemplateFormat);
+      setTimeout(detectTemplateFormat, 0);
+    }
+    // Also trigger on template file selection
+    const resumeTemplateFileInput = document.getElementById('resume-template-file');
+    if (resumeTemplateFileInput) {
+      resumeTemplateFileInput.addEventListener('change', function() {
+        setTimeout(detectTemplateFormat, 0);
+      });
+    }
+
+    // Show/hide prompt fields
+    function updatePromptVisibility() {
+      if (!templateExtSelect) return;
+      if (templateExtSelect.value === 'tex') {
+        if (promptMdInput) promptMdInput.parentElement.style.display = 'none';
+        if (promptTexInput) promptTexInput.parentElement.style.display = '';
+      } else {
+        if (promptMdInput) promptMdInput.parentElement.style.display = '';
+        if (promptTexInput) promptTexInput.parentElement.style.display = 'none';
+      }
+    }
+    if (templateExtSelect) {
+      templateExtSelect.addEventListener('change', updatePromptVisibility);
+      updatePromptVisibility();
+    }
   });
 
   // Use form submit event instead of button click
@@ -41,7 +148,16 @@ document.addEventListener('DOMContentLoaded', function() {
       const phoneInput = document.getElementById('personal-phone');
       const linkedinInput = document.getElementById('personal-linkedin');
       const githubInput = document.getElementById('personal-github');
-      const templateInput = document.getElementById('template');
+      const templateExtSelect = document.getElementById('template-ext');
+      const promptMdInput = document.getElementById('prompt-md');
+      const promptTexInput = document.getElementById('prompt-tex');
+
+      // Detect template format for saving
+      let templateExt = 'md';
+      const resumeTemplatePathInput = document.getElementById('resume-template-path');
+      if (resumeTemplatePathInput && /\.tex$/i.test(resumeTemplatePathInput.value.trim())) {
+        templateExt = 'tex';
+      }
 
       chrome.storage.sync.set({
         resumePath: resumePathInput ? resumePathInput.value : '',
@@ -53,7 +169,9 @@ document.addEventListener('DOMContentLoaded', function() {
         personalPhone: phoneInput ? phoneInput.value : '',
         personalLinkedin: linkedinInput ? linkedinInput.value : '',
         personalGithub: githubInput ? githubInput.value : '',
-        template: templateInput ? templateInput.value : ''
+        templateExt, // still save for background.js compatibility
+        promptMd: promptMdInput ? promptMdInput.value : '',
+        promptTex: promptTexInput ? promptTexInput.value : ''
       }, function() {
         alert('Configuration saved!');
       });

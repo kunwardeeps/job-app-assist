@@ -1,7 +1,7 @@
 // LLM API logic: switchable between Gemini and GPT-4
 async function callLLM(model, endpoint, apiKey, prompt) {
   console.log('[llm.js] callLLM called with model:', model, 'endpoint:', endpoint);
-
+  console.log('[llm.js] callLLM called with prompt:', prompt);
   if (model === 'gemini') {
     // Google Gemini API call
     console.log('[llm.js] Sending request to Gemini API');

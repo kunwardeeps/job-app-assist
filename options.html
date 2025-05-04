@@ -31,6 +31,14 @@
         <label>Resume Template (.md or .tex): <input type="text" id="resume-template-path"><button id="resume-template-browse-btn" type="button">Browse</button></label>
         <input type="file" id="resume-template-file" style="display:none" accept=".md,.tex">
         <span id="resume-template-status"></span>
+        <div id="prompt-md-section">
+          <div class="section-title">Prompt for Markdown Resume:</div>
+          <textarea id="prompt-md" rows="6" placeholder="Prompt for Markdown resumes"></textarea>
+        </div>
+        <div id="prompt-tex-section">
+          <div class="section-title">Prompt for LaTeX Resume:</div>
+          <textarea id="prompt-tex" rows="6" placeholder="Prompt for LaTeX resumes"></textarea>
+        </div>
       </fieldset>
       <fieldset>
         <legend>LLM Settings</legend>

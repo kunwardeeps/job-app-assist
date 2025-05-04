@@ -39,61 +39,23 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 
   if (request.action === 'generateResume') {
-    let prompt;
-    if (request.templateExt === 'tex') {
-      prompt = `
-You are an expert resume writer. Given the following job description, current resume, and resume template in LaTeX format, create a customized resume.
-- Follow the exact structure and formatting of the LaTeX template
-- Only include relevant experiences, skills, and keywords that match the job description
-- Rewrite sections as needed to highlight fit
+    chrome.storage.sync.get(['promptMd', 'promptTex'], function(prompts) {
+      let prompt;
+      if (request.templateExt === 'tex') {
+        prompt = (prompts.promptTex || '').trim();
+      } else {
+        prompt = (prompts.promptMd || '').trim();
+      }
+      // Replace placeholders in prompt
+      prompt = prompt
+        .replace(/\{\{jobDescription\}\}/g, request.jobDescription || '')
+        .replace(/\{\{resumeContent\}\}/g, request.resumeContent || '')
+        .replace(/\{\{template\}\}/g, request.template || '');
 
-Job Description:
-${request.jobDescription}
-
-Current Resume Content:
-${request.resumeContent}
-
-Resume Template Format (LaTeX):
-${request.template || '(Using default LaTeX format)'}
-
-Instructions:
-1. Keep the personal information like name, email, phone number, linkedin and github intact in the LaTex template
-2. Fill in the template with relevant content from the current resume
-3. Customize content to match job requirements
-4. Keep LaTeX formatting intact
-5. Output the complete formatted LaTeX resume
-6. Keep the dates in the mmm yyyy format (e.g., Jan 2020)
-7. Generate a 2 page resume
-`;
-    } else {
-      prompt = `
-You are an expert resume writer. Given the following job description, current resume, and resume template in markdown format, create a customized resume.
-- Follow the exact structure and formatting of the template
-- Only include relevant experiences, skills, and keywords that match the job description
-- Rewrite sections as needed to highlight fit
-
-Job Description:
-${request.jobDescription}
-
-Current Resume Content:
-${request.resumeContent}
-
-Resume Template Format:
-${request.template || '(Using default markdown format)'}
-
-Instructions:
-1. Keep the personal information like name, email, phone number, linkedin and github intact in the Markdown template
-2. Fill in the template with relevant content from the current resume
-3. Customize content to match job requirements
-4. Keep Markdown formatting intact
-5. Output the complete formatted Markdown resume
-6. Keep the dates in the mmm yyyy format (e.g., Jan 2020)
-7. Generate a 2 page resume
-`;
-    }
-    callLLM(request.model, request.endpoint, request.apiKey, prompt).then(customizedResume => {
-      chrome.storage.local.set({ customizedResume }, function() {
-        sendResponse({ success: true, customizedResume });
+      callLLM(request.model, request.endpoint, request.apiKey, prompt).then(customizedResume => {
+        chrome.storage.local.set({ customizedResume }, function() {
+          sendResponse({ success: true, customizedResume });
+        });
       });
     });
     return true; // async
